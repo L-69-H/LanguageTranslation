@@ -1,70 +1,77 @@
-# Getting Started with Create React App
+# Language Translation Web Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a web application for language translation with additional features such as speech-to-text, text-to-speech, and audio file processing.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Text Translation**: Translate text between various languages.
+- **Speech Input**: Convert spoken words into text using speech recognition.
+- **Text-to-Speech**: Convert translated text to speech and play it.
+- **Audio File Processing**: Upload an audio file URL for transcription.
 
-### `npm start`
+## Technologies Used
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- React
+- Axios
+- MyMemory Translation API
+- Deepgram Speech Recognition API
+- SpeechSynthesis API
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Setup Instructions
 
-### `npm test`
+1. **Clone the Repository**
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+   ```bash
+   git clone https://github.com/your-username/your-repository.git
+   cd your-repository
+2. Install Dependencies
 
-### `npm run build`
+Make sure you have Node.js and npm installed. Then, install the necessary packages:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm install
+npm start
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Deployment
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Vercel Deployment
 
-### `npm run eject`
+1. Go to [Render](https://render.com) and log in or sign up.
+2. Click on "New Project".
+3. Import your GitHub repository by connecting your GitHub account.
+4. Follow the prompts to set up and deploy your project.
+5. Vercel will automatically build and deploy your project. You will receive a unique URL where your application will be accessible.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Push to GitHub
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Make sure your code is pushed to a GitHub repository.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Usage
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Enter Text
 
-## Learn More
+Type the text you want to translate in the input box.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Select Languages
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Choose the source and target languages from the dropdown menus.
 
-### Code Splitting
+### Translate
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Click the "Translate" button to get the translated text.
 
-### Analyzing the Bundle Size
+### Play Translated Text
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Click the "Play Translation" button to hear the translated text.
 
-### Making a Progressive Web App
+### Pause/Resume Translation
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Use the "Pause Translation" or "Resume Translation" button to control the speech playback.
 
-### Advanced Configuration
+### Speech Input
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Click "Start Speech Input" to start recording spoken words and automatically translate them.
 
-### Deployment
+### Upload Audio File
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Paste the URL of your audio file and click "Process Audio URL" to get a transcription of the audio.
