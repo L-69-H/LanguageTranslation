@@ -5,16 +5,14 @@ import './TranslationForm.css';
 function TranslationForm() {
   const [text, setText] = useState('');
   const [translatedText, setTranslatedText] = useState('');
-  const [sourceLanguage, setSourceLanguage] = useState('en'); // Default source language
-  const [targetLanguage, setTargetLanguage] = useState('es'); // Default target language
+  const [sourceLanguage, setSourceLanguage] = useState('en'); 
+  const [targetLanguage, setTargetLanguage] = useState('es');
   const [isListening, setIsListening] = useState(false);
-  const [audioUrl, setAudioUrl] = useState(''); // State for audio URL
-  const [isPaused, setIsPaused] = useState(false); // State for pause
+  const [audioUrl, setAudioUrl] = useState('');
+  const [isPaused, setIsPaused] = useState(false);
 
-  // Ref for SpeechSynthesisUtterance
   const utteranceRef = useRef(null);
 
-  // List of languages for dropdown
   const languages = [
     { code: 'en', name: 'English' },
     { code: 'es', name: 'Spanish' },
@@ -60,7 +58,6 @@ function TranslationForm() {
     { code: 'eu', name: 'Basque' },
     { code: 'cy', name: 'Welsh' },
     { code: 'ca', name: 'Catalan' }
-    // Add more languages as needed
   ];
 
   const handleSubmit = async (e) => {
@@ -68,15 +65,12 @@ function TranslationForm() {
     try {
       const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLanguage}|${targetLanguage}`;
 
-      // Make the request to MyMemory API
       const response = await axios.get(url);
 
-      // Check if source language is not English
       const translation = sourceLanguage === 'en'
         ? response.data.responseData.translatedText
-        : response.data.matches[1]?.translation; // Take the second response
+        : response.data.matches[1]?.translation; 
 
-      // Set the translated text
       setTranslatedText(translation || 'Translation not available');
     } catch (error) {
       console.error('Error translating text:', error);
@@ -86,9 +80,9 @@ function TranslationForm() {
   const playTranslatedText = () => {
     if (window.speechSynthesis) {
       const utterance = new SpeechSynthesisUtterance(translatedText);
-      utterance.lang = targetLanguage; // Set language for TTS
+      utterance.lang = targetLanguage; 
       window.speechSynthesis.speak(utterance);
-      utteranceRef.current = utterance; // Save reference to the utterance
+      utteranceRef.current = utterance; 
     } else {
       console.error('Speech synthesis not supported in this browser.');
     }
@@ -108,7 +102,6 @@ function TranslationForm() {
     }
   };
 
-  // Initialize Speech Recognition
   const initializeSpeechRecognition = () => {
     const recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!recognition) {
@@ -165,7 +158,6 @@ function TranslationForm() {
         }
       );
 
-      // Update text state with the response from the API
       if (!isPaused) {
         setText(response.data.results.channels[0].alternatives[0].transcript);
       }

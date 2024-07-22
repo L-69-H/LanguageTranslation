@@ -26,12 +26,10 @@ def detect_language():
 
 @app.route('/speech-to-text', methods=['POST'])
 def speech_to_text():
-    # Implement speech-to-text functionality
     pass
 
 @app.route('/text-to-speech', methods=['POST'])
 def text_to_speech():
-    # Implement text-to-speech functionality
     pass
 
 if __name__ == '__main__':
