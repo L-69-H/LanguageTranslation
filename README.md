@@ -34,7 +34,7 @@ npm start
 
 ## Deployment
 
-### Vercel Deployment
+### Render Deployment
 
 1. Go to [Render](https://render.com) and log in or sign up.
 2. Click on "New Project".
