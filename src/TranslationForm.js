@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './TranslationForm.css';
-import fs from "fs";
-import OpenAI from "openai";
 
 function TranslationForm() {
   const [text, setText] = useState('');
@@ -10,7 +8,11 @@ function TranslationForm() {
   const [sourceLanguage, setSourceLanguage] = useState('en'); // Default source language
   const [targetLanguage, setTargetLanguage] = useState('es'); // Default target language
   const [isListening, setIsListening] = useState(false);
-  const [audioFile, setAudioFile] = useState(null);
+  const [audioUrl, setAudioUrl] = useState(''); // State for audio URL
+  const [isPaused, setIsPaused] = useState(false); // State for pause
+
+  // Ref for SpeechSynthesisUtterance
+  const utteranceRef = useRef(null);
 
   // List of languages for dropdown
   const languages = [
@@ -20,6 +22,44 @@ function TranslationForm() {
     { code: 'de', name: 'German' },
     { code: 'it', name: 'Italian' },
     { code: 'pt', name: 'Portuguese' },
+    { code: 'ru', name: 'Russian' },
+    { code: 'zh', name: 'Chinese' },
+    { code: 'ja', name: 'Japanese' },
+    { code: 'ko', name: 'Korean' },
+    { code: 'ar', name: 'Arabic' },
+    { code: 'hi', name: 'Hindi' },
+    { code: 'bn', name: 'Bengali' },
+    { code: 'pa', name: 'Punjabi' },
+    { code: 'sw', name: 'Swahili' },
+    { code: 'tr', name: 'Turkish' },
+    { code: 'vi', name: 'Vietnamese' },
+    { code: 'th', name: 'Thai' },
+    { code: 'he', name: 'Hebrew' },
+    { code: 'pl', name: 'Polish' },
+    { code: 'uk', name: 'Ukrainian' },
+    { code: 'cs', name: 'Czech' },
+    { code: 'sk', name: 'Slovak' },
+    { code: 'ro', name: 'Romanian' },
+    { code: 'hu', name: 'Hungarian' },
+    { code: 'sv', name: 'Swedish' },
+    { code: 'no', name: 'Norwegian' },
+    { code: 'da', name: 'Danish' },
+    { code: 'fi', name: 'Finnish' },
+    { code: 'nl', name: 'Dutch' },
+    { code: 'el', name: 'Greek' },
+    { code: 'bg', name: 'Bulgarian' },
+    { code: 'sr', name: 'Serbian' },
+    { code: 'hr', name: 'Croatian' },
+    { code: 'sl', name: 'Slovenian' },
+    { code: 'lt', name: 'Lithuanian' },
+    { code: 'lv', name: 'Latvian' },
+    { code: 'et', name: 'Estonian' },
+    { code: 'mt', name: 'Maltese' },
+    { code: 'km', name: 'Khmer' },
+    { code: 'la', name: 'Latin' },
+    { code: 'eu', name: 'Basque' },
+    { code: 'cy', name: 'Welsh' },
+    { code: 'ca', name: 'Catalan' }
     // Add more languages as needed
   ];
 
@@ -27,12 +67,12 @@ function TranslationForm() {
     e.preventDefault();
     try {
       const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLanguage}|${targetLanguage}`;
-      
+
       // Make the request to MyMemory API
       const response = await axios.get(url);
 
       // Check if source language is not English
-      const translation = sourceLanguage === 'en' 
+      const translation = sourceLanguage === 'en'
         ? response.data.responseData.translatedText
         : response.data.matches[1]?.translation; // Take the second response
 
@@ -48,8 +88,23 @@ function TranslationForm() {
       const utterance = new SpeechSynthesisUtterance(translatedText);
       utterance.lang = targetLanguage; // Set language for TTS
       window.speechSynthesis.speak(utterance);
+      utteranceRef.current = utterance; // Save reference to the utterance
     } else {
       console.error('Speech synthesis not supported in this browser.');
+    }
+  };
+
+  const handlePauseToggle = () => {
+    if (window.speechSynthesis && utteranceRef.current) {
+      if (isPaused) {
+        window.speechSynthesis.resume();
+        setIsPaused(false);
+      } else {
+        window.speechSynthesis.pause();
+        setIsPaused(true);
+      }
+    } else {
+      console.error('Speech synthesis or utterance not available.');
     }
   };
 
@@ -89,25 +144,35 @@ function TranslationForm() {
     setIsListening(true);
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setAudioFile(file);
+  const handleUrlChange = (e) => {
+    setAudioUrl(e.target.value);
   };
-  
- 
-  const openai = new OpenAI();
-  
-  async function handleFileUpload() {
-    const transcription = await openai.audio.transcriptions.create({
-      file: fs.createReadStream("/path/to/file/audio.mp3"),
-      model: "whisper-1",
-    });
-  
-    console.log(transcription.text);
-  }
-  
 
+  const handleFileUpload = async () => {
+    if (!audioUrl) return;
 
+    try {
+      const response = await axios.post(
+        'https://api.deepgram.com/v1/listen?model=nova-2&smart_format=true',
+        {
+          url: audioUrl,
+        },
+        {
+          headers: {
+            Authorization: 'Token 998a19c0605baadee2917bf98bda7874fb7f0311',
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      // Update text state with the response from the API
+      if (!isPaused) {
+        setText(response.data.results.channels[0].alternatives[0].transcript);
+      }
+    } catch (error) {
+      console.error('Error uploading audio file:', error);
+    }
+  };
 
   return (
     <div className="translation-container">
@@ -155,13 +220,14 @@ function TranslationForm() {
             {isListening ? 'Listening...' : 'Start Speech Input'}
           </button>
           <input
-            type="file"
-            accept="audio/*"
-            onChange={handleFileChange}
-            className="file-input"
+            type="text"
+            value={audioUrl}
+            onChange={handleUrlChange}
+            placeholder="Paste the URL of your audio file"
+            className="url-input"
           />
           <button type="button" onClick={handleFileUpload} className="upload-button">
-            Upload Audio
+            Process Audio URL
           </button>
         </div>
       </form>
@@ -173,7 +239,12 @@ function TranslationForm() {
           readOnly
           placeholder="Translation will appear here"
         />
-        <button onClick={playTranslatedText} className="play-button">Play Translation</button>
+        <div className='button-group'>
+          <button onClick={playTranslatedText} className="play-button">Play Translation</button>
+          <button type="button" onClick={handlePauseToggle} className="pause-button">
+            {isPaused ? 'Resume Translation' : 'Pause Translation'}
+          </button>
+        </div>
       </div>
     </div>
   );
